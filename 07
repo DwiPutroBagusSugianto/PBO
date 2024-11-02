@@ -1,0 +1,55 @@
+class Nilai {
+    constructor(nilai) {
+        this.nilai = nilai;
+    }
+
+    hitungRataRata() {
+        if (!Array.isArray(this.nilai) || this.nilai.length === 0) {
+            throw new Error("Data nilai tidak valid atau kosong.");
+        }
+        const total = this.nilai.reduce((acc, curr) => acc + curr, 0);
+        return total / this.nilai.length;
+    }
+}
+
+class NilaiView {
+    render(rataRata) {
+        return `Rata-rata nilai: ${rataRata}`;
+    }
+
+    renderError(error) {
+        return `Error: ${error}`;
+    }
+}
+
+function tampilkanRataRata(nilai) {
+    const view = new NilaiView();
+    try {
+        const modelNilai = new Nilai(nilai);
+        const rataRata = modelNilai.hitungRataRata();
+        console.log(view.render(rataRata));
+    } catch (error) {
+        console.log(view.renderError(error.message));
+    }
+}
+
+function bagi(a, b) {
+    try {
+        if (b === 0) {
+            throw new Error("Pembagian dengan nol tidak diperbolehkan.");
+        }
+        return a / b;
+    } catch (error) {
+        console.error("Terjadi error:", error.message);
+        return null;  // Mengembalikan null saat ada error
+    } finally {
+        console.log("Operasi pembagian selesai.");
+    }
+}
+
+// Contoh penggunaan
+tampilkanRataRata([1, 2, 3]);  // Rata-rata yang valid
+tampilkanRataRata([]);             // Data kosong
+
+console.log(bagi(2, 2));           // Pembagian yang valid
+console.log(bagi(2, 0));           // Pembagian dengan nol
