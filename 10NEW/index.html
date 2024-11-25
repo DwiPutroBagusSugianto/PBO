@@ -4,17 +4,14 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login Form</title>
-    <!-- Linking to external CSS file for styling -->
     <link rel="stylesheet" href="./pertemuan10.css">
 </head>
 <body>
-    <!-- The main container where the login form will be rendered -->
     <div id="app"></div>
 
     <script>
-        // Object containing Model-View-Controller (MVC) logic
         const pbo = {
-            // Model: Stores the database of users
+            // Model untuk database
             model: {
                 mahasiswa: [
                     { username: 'sevti', pin: 'sevti321' },
@@ -22,11 +19,9 @@
                     { username: 'bagus', pin: 'bagus321' },
                 ],
             },
-
-            // View: Defines the HTML structure of the login form
+            // View untuk tampilan
             view: {
                 signform: function () {
-                    // Returns the HTML markup for the login form
                     return `
                         <div class="input-form">
                             Username: <input type='text' id='username'><br/>
@@ -36,39 +31,67 @@
                         </div>
                     `;
                 },
+
+                // Catalog Menu that will appear after successful login
+                catalogMenu: function () {
+                    return `
+                        <div class="catalog">
+                            <h2>Welcome to the Catalog!</h2>
+                            <ul>
+                                <li><a href="#">Item 1</a></li>
+                                <li><a href="#">Item 2</a></li>
+                                <li><a href="#">Item 3</a></li>
+                            </ul>
+                            <button id='logout'>Logout</button>
+                        </div>
+                    `;
+                },
             },
 
-            // Controller: Manages the interaction between the model and view
+            // Controller untuk perlakuan terhadap view dan database
             controller: {
-                // Initializes the application by rendering the form and setting up event listeners
                 init: function () {
                     const app = document.getElementById('app');
-                    app.innerHTML = pbo.view.signform(); // Renders the login form
+                    app.innerHTML = pbo.view.signform();
                     
-                    // Adding event listeners for login and cancel buttons
+                    // Event listeners for login and cancel buttons
                     document.getElementById('login').addEventListener('click', this.signin);
                     document.getElementById('cancel').addEventListener('click', this.signout);
                 },
 
-                // Function to handle login action
+                // Function to handle sign-in (login)
                 signin: function () {
                     const username = document.getElementById('username').value;
                     const pin = document.getElementById('pin').value;
 
-                    // Search for the user in the model
+                    // Find the user in the model
                     const userFound = pbo.model.mahasiswa.find(
                         (user) => user.username === username && user.pin === pin
                     );
 
-                    // Show appropriate message based on whether the user is found or not
+                    // If user is found, show the catalog, else show error
                     if (userFound) {
-                        alert('Login berhasil!'); // Success message
+                        pbo.controller.showCatalog();
                     } else {
-                        alert('Username atau Pin salah!'); // Error message
+                        alert('Username atau Pin salah!');
                     }
                 },
 
-                // Function to clear the form fields when the cancel button is clicked
+                // Function to show the catalog menu after successful login
+                showCatalog: function () {
+                    const app = document.getElementById('app');
+                    app.innerHTML = pbo.view.catalogMenu();  // Replace the login form with the catalog menu
+
+                    // Adding event listener to the logout button
+                    document.getElementById('logout').addEventListener('click', this.logout);
+                },
+
+                // Function to handle logout (go back to login form)
+                logout: function () {
+                    pbo.controller.init();  // Go back to the login form
+                },
+
+                // Function to clear form fields when cancel button is clicked
                 signout: function () {
                     document.getElementById('username').value = '';
                     document.getElementById('pin').value = '';
