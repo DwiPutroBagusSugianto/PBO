@@ -1,1 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Formulir Masuk</title>
+    <link rel="stylesheet" href="./pertemuan10.css">
+</head>
+<body>
+    <div id="app"></div>
 
+    <script>
+        const pbo = {
+            // Model untuk database
+            model: {
+                mahasiswa: [
+                    { username: 'sevti', pin: 'sevti321' },
+                    { username: 'dwi', pin: 'dwi321' },
+                    { username: 'bagus', pin: 'bagus321' },
+                ],
+                // Data produk
+                products: [
+                   
+                    { id: 1, name: 'Burger', description: 'Burger adalah makanan yang terdiri dari roti bulat dengan isian patty daging, sayuran, keju, dan saus.', image: 'https://i.pinimg.com/736x/eb/cb/c6/ebcbc6aaa9deca9d6efc1efc93b66945.jpg' },
+                    { id: 2, name: 'Ayam Richesse', description: 'Ayam Richeese satu ekor adalah menu ayam utuh yang digoreng crispy, disajikan dengan pilihan saus keju atau pedas', image: 'https://i.pinimg.com/736x/e5/ce/0f/e5ce0f82cb518ff4e618aae6330b5f44.jpg' },
+                    { id: 3, name: 'KFC', description: 'KFC BROOOOO!!', image: 'https://i.pinimg.com/736x/d7/e4/4b/d7e44b200b32c02b4ad7db5b86410628.jpg' },
+                    { id: 4, name: 'Pizza', description: 'Pizza adalah salah satu favorit Italia klasik, memiliki lapisan roti tipis dan renyah', image: 'https://i.pinimg.com/736x/1d/28/c5/1d28c51cfab73dfcd0e3fad6824f4e86.jpg' },
+                ]
+            },
+            // View untuk tampilan
+            view: {
+                signform: function () {
+                    return `
+                        <div class="catalog">
+                            <div class="input-form">
+                                Nama pengguna: <input type='text' id='username'><br/>
+                                Pin: <input type='password' id='pin'><br/>
+                                <button id='login'>Masuk</button>
+                                <button id='batal'>Batal</button>
+                            </div>
+                        `;
+                    },
+    
+                    // Menu katalog yang muncul setelah login berhasil
+                    catalogMenu: function () {
+                        const productsList = pbo.model.products.map(product => `
+                            <div class="product-item">
+                                <img src="${product.image}" alt="${product.name}" class="product-image" />
+                                <h3>${product.name}</h3>
+                                <p>${product.description}</p>
+                                <button class="checkout-btn" data-id="${product.id}">Checkout</button>
+                            </div>
+                        `).join('');
+    
+                        return `
+                            <div class="catalog">
+                                <h2>Selamat datang di katalog!</h2>
+                                ${productsList}
+                                <button id='logout'>Keluar</button>
+                            </div>
+                        </div>
+                    `;
+                },
+            },
+
+            // Controller untuk pengontrol tampilan dan interaksi dengan model
+            controller: {
+                init: function () {
+                    const app = document.getElementById('app');
+                    app.innerHTML = pbo.view.signform();
+
+                    // Event listeners untuk tombol login dan batal
+                    document.getElementById('login').addEventListener('click', this.signin);
+                    document.getElementById('batal').addEventListener('click', this.signout);
+                },
+
+                // Fungsi untuk menangani login
+                signin: function () {
+                    const username = document.getElementById('username').value;
+                    const pin = document.getElementById('pin').value;
+
+                    // Mencari pengguna dalam model
+                    const userFound = pbo.model.mahasiswa.find(
+                        (user) => user.username === username && user.pin === pin
+                    );
+
+                    // Jika pengguna ditemukan, tampilkan menu katalog
+                    if (userFound) {
+                        pbo.controller.showCatalog();
+                    } else {
+                        alert('Nama Pengguna atau Pin salah!');
+                    }
+                },
+
+                // Fungsi untuk menampilkan menu katalog setelah login berhasil
+                showCatalog: function () {
+                    const app = document.getElementById('app');
+                    app.innerHTML = pbo.view.catalogMenu();  // Ganti tampilan login dengan katalog produk
+
+                    // Menambahkan event listener untuk tombol checkout
+                    const checkoutButtons = document.querySelectorAll('.checkout-btn');
+                    checkoutButtons.forEach(button => {
+                        button.addEventListener('click', pbo.controller.checkout);
+                    });
+
+                    // Menambahkan event listener untuk tombol logout
+                    document.getElementById('logout').addEventListener('click', this.logout);
+                },
+
+                // Fungsi untuk menangani checkout (pembelian)
+                checkout: function (event) {
+                    const productId = event.target.getAttribute('data-id');
+                    const product = pbo.model.products.find(p => p.id == productId);
+                    alert(`Anda membeli: ${product.name}\nDeskripsi: ${product.description}`);
+                },
+
+                // Fungsi untuk menangani logout (kembali ke halaman login)
+                logout: function () {
+                    pbo.controller.init();  // Kembali ke tampilan login
+                },
+
+                // Fungsi untuk menghapus nilai input ketika tombol batal diklik
+                signout: function () {
+                    document.getElementById('username').value = '';
+                    document.getElementById('pin').value = '';
+                },
+            },
+        };
+
+        // Inisialisasi program ketika halaman dimuat
+        pbo.controller.init();
+    </script>
+</body>
+</html>
