@@ -3,32 +3,30 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login Form with Catalog</title>
+    <title>Login Form</title>
+    <!-- Linking to external CSS file for styling -->
     <link rel="stylesheet" href="./pertemuan10.css">
 </head>
 <body>
+    <!-- The main container where the login form will be rendered -->
     <div id="app"></div>
 
     <script>
+        // Object containing Model-View-Controller (MVC) logic
         const pbo = {
-            // Model untuk database
+            // Model: Stores the database of users
             model: {
                 mahasiswa: [
-                    { username: 'dini', pin: 'dini2312' },
-                    { username: 'admin', pin: 'admin123' },
-                    { username: 'arya', pin: 'arya1809' },
+                    { username: 'sevti', pin: 'sevti321' },
+                    { username: 'dwi', pin: 'dwi321' },
+                    { username: 'bagus', pin: 'bagus321' },
                 ],
-                catalog: [
-                    { id: 1, name: 'Laptop', description: 'High performance laptop', price: '$1200', image: 'https://via.placeholder.com/150' },
-                    { id: 2, name: 'Smartphone', description: 'Latest model smartphone', price: '$800', image: 'https://via.placeholder.com/150' },
-                    { id: 3, name: 'Headphones', description: 'Noise-cancelling headphones', price: '$200', image: 'https://via.placeholder.com/150' }
-                ],
-                cart: []
             },
 
-            // View untuk tampilan
+            // View: Defines the HTML structure of the login form
             view: {
                 signform: function () {
+                    // Returns the HTML markup for the login form
                     return `
                         <div class="input-form">
                             Username: <input type='text' id='username'><br/>
@@ -38,108 +36,47 @@
                         </div>
                     `;
                 },
-
-                catalogView: function () {
-                    const items = pbo.model.catalog.map(item => `
-                        <div class="catalog-item" data-id="${item.id}">
-                            <img src="${item.image}" alt="${item.name}">
-                            <h3>${item.name}</h3>
-                            <p>${item.description}</p>
-                            <p><strong>${item.price}</strong></p>
-                            <button class="add-to-cart">Add to Cart</button>
-                        </div>
-                    `).join('');
-                    return `
-                        <div class="catalog">
-                            <h2>Catalog</h2>
-                            <div class="items">${items}</div>
-                        </div>
-                    `;
-                },
-
-                cartView: function () {
-                    const items = pbo.model.cart.map(item => `
-                        <div class="cart-item">
-                            <h3>${item.name}</h3>
-                            <p>${item.price}</p>
-                        </div>
-                    `).join('');
-                    return `
-                        <div class="cart">
-                            <h2>Your Cart</h2>
-                            <div class="items">${items}</div>
-                            <button id="checkout">Checkout</button>
-                        </div>
-                    `;
-                },
             },
 
-            // Controller untuk perlakuan terhadap view dan database
+            // Controller: Manages the interaction between the model and view
             controller: {
+                // Initializes the application by rendering the form and setting up event listeners
                 init: function () {
                     const app = document.getElementById('app');
-                    app.innerHTML = pbo.view.signform();
-
+                    app.innerHTML = pbo.view.signform(); // Renders the login form
+                    
+                    // Adding event listeners for login and cancel buttons
                     document.getElementById('login').addEventListener('click', this.signin);
                     document.getElementById('cancel').addEventListener('click', this.signout);
                 },
 
+                // Function to handle login action
                 signin: function () {
                     const username = document.getElementById('username').value;
                     const pin = document.getElementById('pin').value;
 
+                    // Search for the user in the model
                     const userFound = pbo.model.mahasiswa.find(
                         (user) => user.username === username && user.pin === pin
                     );
 
+                    // Show appropriate message based on whether the user is found or not
                     if (userFound) {
-                        alert('Login berhasil!');
-                        pbo.controller.showCatalog(); // Show the catalog after successful login
+                        alert('Login berhasil!'); // Success message
                     } else {
-                        alert('Username atau Pin salah!');
+                        alert('Username atau Pin salah!'); // Error message
                     }
                 },
 
+                // Function to clear the form fields when the cancel button is clicked
                 signout: function () {
                     document.getElementById('username').value = '';
                     document.getElementById('pin').value = '';
                 },
-
-                showCatalog: function () {
-                    const app = document.getElementById('app');
-                    app.innerHTML = pbo.view.catalogView();
-
-                    const addToCartButtons = document.querySelectorAll('.add-to-cart');
-                    addToCartButtons.forEach(button => {
-                        button.addEventListener('click', this.addToCart);
-                    });
-                },
-
-                addToCart: function (e) {
-                    const itemId = e.target.closest('.catalog-item').getAttribute('data-id');
-                    const item = pbo.model.catalog.find(item => item.id == itemId);
-
-                    if (item) {
-                        pbo.model.cart.push(item);
-                        alert(${item.name} added to your cart!);
-                    }
-                },
-
-                showCart: function () {
-                    const app = document.getElementById('app');
-                    app.innerHTML = pbo.view.cartView();
-
-                    document.getElementById('checkout').addEventListener('click', this.checkout);
-                },
-
-                checkout: function () {
-                    alert('Proceeding to checkout...');
-                    // Here you can add logic for checkout
-                }
             },
         };
 
-        // Inisialisasi programnya
+        // Initialize the program when the page loads
         pbo.controller.init();
     </script>
 </body>
