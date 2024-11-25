@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login Form</title>
+    <title>Formulir Masuk</title>
     <link rel="stylesheet" href="./pertemuan10.css">
 </head>
 <body>
@@ -18,80 +18,104 @@
                     { username: 'dwi', pin: 'dwi321' },
                     { username: 'bagus', pin: 'bagus321' },
                 ],
+                // Data produk
+                products: [
+                    { id: 1, name: 'Produk 1', description: 'Deskripsi produk 1', image: 'https://via.placeholder.com/150' },
+                    { id: 2, name: 'Produk 2', description: 'Deskripsi produk 2', image: 'https://via.placeholder.com/150' },
+                    { id: 3, name: 'Produk 3', description: 'Deskripsi produk 3', image: 'https://via.placeholder.com/150' },
+                ]
             },
             // View untuk tampilan
             view: {
                 signform: function () {
                     return `
                         <div class="input-form">
-                            Username: <input type='text' id='username'><br/>
+                            Nama pengguna: <input type='text' id='username'><br/>
                             Pin: <input type='password' id='pin'><br/>
-                            <button id='login'>Login</button>
-                            <button id='cancel'>Cancel</button>
+                            <button id='login'>Masuk</button>
+                            <button id='batal'>Batal</button>
                         </div>
                     `;
                 },
 
-                // Catalog Menu that will appear after successful login
+                // Menu katalog yang muncul setelah login berhasil
                 catalogMenu: function () {
+                    const productsList = pbo.model.products.map(product => `
+                        <div class="product-item">
+                            <img src="${product.image}" alt="${product.name}" class="product-image" />
+                            <h3>${product.name}</h3>
+                            <p>${product.description}</p>
+                            <button class="checkout-btn" data-id="${product.id}">Checkout</button>
+                        </div>
+                    `).join('');
+
                     return `
                         <div class="catalog">
-                            <h2>Welcome to the Catalog!</h2>
-                            <ul>
-                                <li><a href="#">Item 1</a></li>
-                                <li><a href="#">Item 2</a></li>
-                                <li><a href="#">Item 3</a></li>
-                            </ul>
-                            <button id='logout'>Logout</button>
+                            <h2>Selamat datang di katalog!</h2>
+                            ${productsList}
+                            <button id='logout'>Keluar</button>
                         </div>
                     `;
                 },
             },
 
-            // Controller untuk perlakuan terhadap view dan database
+            // Controller untuk pengontrol tampilan dan interaksi dengan model
             controller: {
                 init: function () {
                     const app = document.getElementById('app');
                     app.innerHTML = pbo.view.signform();
-                    
-                    // Event listeners for login and cancel buttons
+
+                    // Event listeners untuk tombol login dan batal
                     document.getElementById('login').addEventListener('click', this.signin);
-                    document.getElementById('cancel').addEventListener('click', this.signout);
+                    document.getElementById('batal').addEventListener('click', this.signout);
                 },
 
-                // Function to handle sign-in (login)
+                // Fungsi untuk menangani login
                 signin: function () {
                     const username = document.getElementById('username').value;
                     const pin = document.getElementById('pin').value;
 
-                    // Find the user in the model
+                    // Mencari pengguna dalam model
                     const userFound = pbo.model.mahasiswa.find(
                         (user) => user.username === username && user.pin === pin
                     );
 
-                    // If user is found, show the catalog, else show error
+                    // Jika pengguna ditemukan, tampilkan menu katalog
                     if (userFound) {
                         pbo.controller.showCatalog();
                     } else {
-                        alert('Username atau Pin salah!');
+                        alert('Nama Pengguna atau Pin salah!');
                     }
                 },
 
-                // Function to show the catalog menu after successful login
+                // Fungsi untuk menampilkan menu katalog setelah login berhasil
                 showCatalog: function () {
                     const app = document.getElementById('app');
-                    app.innerHTML = pbo.view.catalogMenu();  // Replace the login form with the catalog menu
+                    app.innerHTML = pbo.view.catalogMenu();  // Ganti tampilan login dengan katalog produk
 
-                    // Adding event listener to the logout button
+                    // Menambahkan event listener untuk tombol checkout
+                    const checkoutButtons = document.querySelectorAll('.checkout-btn');
+                    checkoutButtons.forEach(button => {
+                        button.addEventListener('click', pbo.controller.checkout);
+                    });
+
+                    // Menambahkan event listener untuk tombol logout
                     document.getElementById('logout').addEventListener('click', this.logout);
                 },
 
-                // Function to handle logout (go back to login form)
-                logout: function () {
-                    pbo.controller.init();  // Go back to the login form
+                // Fungsi untuk menangani checkout (pembelian)
+                checkout: function (event) {
+                    const productId = event.target.getAttribute('data-id');
+                    const product = pbo.model.products.find(p => p.id == productId);
+                    alert(`Anda membeli: ${product.name}\nDeskripsi: ${product.description}`);
                 },
 
-                // Function to clear form fields when cancel button is clicked
+                // Fungsi untuk menangani logout (kembali ke halaman login)
+                logout: function () {
+                    pbo.controller.init();  // Kembali ke tampilan login
+                },
+
+                // Fungsi untuk menghapus nilai input ketika tombol batal diklik
                 signout: function () {
                     document.getElementById('username').value = '';
                     document.getElementById('pin').value = '';
@@ -99,7 +123,7 @@
             },
         };
 
-        // Initialize the program when the page loads
+        // Inisialisasi program ketika halaman dimuat
         pbo.controller.init();
     </script>
 </body>
