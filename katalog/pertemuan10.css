@@ -93,7 +93,7 @@ input {
 
 /* Styles for buttons */
 button {
-    width: 48%;  /* Buttons take up 48% width to fit two in a row */
+    width: 28%;  /* Buttons take up 48% width to fit two in a row */
     padding: 10px;  /* Add padding inside the buttons */
     margin: 10px 1%;  /* Margin between the buttons */
     border: none;  /* Remove border */
