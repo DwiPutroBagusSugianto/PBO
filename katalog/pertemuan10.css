@@ -93,7 +93,7 @@ input {
 
 /* Styles for buttons */
 button {
-    width: 28%;  /* Buttons take up 48% width to fit two in a row */
+    width: 48%;  /* Buttons take up 48% width to fit two in a row */
     padding: 10px;  /* Add padding inside the buttons */
     margin: 10px 1%;  /* Margin between the buttons */
     border: none;  /* Remove border */
@@ -124,9 +124,6 @@ button#batal:hover {
 /* Logout button styling */
 button#logout {
     background-color: #dc3545;  /* Red background */
-    padding: 5px 10px;  /* Smaller padding */
-    font-size: 12px;  /* Smaller font size */
-    width: auto;  /* Let the width adjust automatically based on content */
 }
 
 button#logout:hover {
